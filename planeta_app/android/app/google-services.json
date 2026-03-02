@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "923085978036",
+    "project_id": "planeta-d1ea3",
+    "storage_bucket": "planeta-d1ea3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923085978036:android:a4186c57b1f083abafdae1",
+        "android_client_info": {
+          "package_name": "com.example.planeta_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUCkQ8mLx2t8C0Tx6xlDxcVnww8YCAQKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
