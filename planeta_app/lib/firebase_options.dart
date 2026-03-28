@@ -71,4 +71,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'planeta-d1ea3.firebasestorage.app',
     iosBundleId: 'com.example.planetaApp',
   );
+
 }
