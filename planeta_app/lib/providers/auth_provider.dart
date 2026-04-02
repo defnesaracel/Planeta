@@ -4,8 +4,7 @@ import 'package:planeta_app/services/auth_service.dart';
 import 'package:planeta_app/services/firebase_auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  // Dikkat: Burada FirebaseAuthService değil, IAuthService kullanıyoruz!
-  // (Dependency Inversion prensibi)
+  //Dependency Inversion principle
   final IAuthService _authService = FirebaseAuthService();
 
   UserEntity? _user;
@@ -22,7 +21,7 @@ class AuthProvider with ChangeNotifier {
       _user = await _authService.signIn(email, password);
     } catch (e) {
       _user = null;
-      rethrow; // Hatayı UI katmanına fırlat ki kullanıcıya mesaj gösterebilelim
+      rethrow; // throws to UI Layer
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -50,7 +49,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _authService.signOut();
-      _user = null; // Yerel kullanıcı verisini temizliyoruz
+      _user = null; // clean local user data
     } catch (e) {
       print("Sign Out Hatası: $e");
       rethrow;

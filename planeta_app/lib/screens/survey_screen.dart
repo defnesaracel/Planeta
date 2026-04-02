@@ -59,11 +59,13 @@ class _SurveyScreenState extends State<SurveyScreen>
   void _onNextPressed() {
     if (_tempSelectedValue == null) return;
 
-    _userAnswers.add(SurveyAnswer(
-      questionId: _questions[_currentIndex].id,
-      value: _tempSelectedValue!,
-      timestamp: DateTime.now(),
-    ));
+    _userAnswers.add(
+      SurveyAnswer(
+        questionId: _questions[_currentIndex].id,
+        value: _tempSelectedValue!,
+        timestamp: DateTime.now(),
+      ),
+    );
 
     if (_currentIndex < _questions.length - 1) {
       _animController.reset();
@@ -85,10 +87,10 @@ class _SurveyScreenState extends State<SurveyScreen>
     final Color scoreColor = result.totalScore >= 80
         ? _darkGreen
         : result.totalScore >= 60
-            ? const Color(0xFF388E3C)
-            : result.totalScore >= 40
-                ? const Color(0xFFF57F17)
-                : const Color(0xFFB71C1C);
+        ? const Color(0xFF388E3C)
+        : result.totalScore >= 40
+        ? const Color(0xFFF57F17)
+        : const Color(0xFFB71C1C);
 
     showDialog(
       context: context,
@@ -141,8 +143,10 @@ class _SurveyScreenState extends State<SurveyScreen>
               ),
               const SizedBox(height: 16),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: _lightGreen,
                   borderRadius: BorderRadius.circular(12),
@@ -259,11 +263,8 @@ class _SurveyScreenState extends State<SurveyScreen>
             child: Image.asset(
               'assets/leaf_image.png',
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.eco_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.eco_rounded, color: Colors.white, size: 22),
             ),
           ),
         ),
@@ -416,8 +417,7 @@ class _SurveyScreenState extends State<SurveyScreen>
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
             width: double.infinity,
-            padding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
@@ -442,8 +442,11 @@ class _SurveyScreenState extends State<SurveyScreen>
                   ),
                 ),
                 if (isSelected)
-                  const Icon(Icons.check_circle_rounded,
-                      color: _darkGreen, size: 22),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: _darkGreen,
+                    size: 22,
+                  ),
               ],
             ),
           ),

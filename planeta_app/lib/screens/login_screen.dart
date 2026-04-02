@@ -23,26 +23,23 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // Giriş işlemini yöneten ana metod
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       try {
-        // AuthProvider üzerinden login işlemini başlatıyoruz
         await authProvider.login(
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
 
-        // Giriş başarılıysa
-        // login_screen.dart içinde _handleLogin metodu
+        // if login successed
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text("Giriş Başarılı!")));
+          ).showSnackBar(const SnackBar(content: Text("Login successed!")));
 
-          // Home sayfasına git ve geri dönüşü kapat (Kullanıcı geri tuşuna basınca tekrar login'e dönmesin)
+          // User will not go back to login screen when enter back
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -50,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } catch (e) {
-        // Hata durumunda (Firebase hataları vb.)
+        // Error
         if (mounted) {
           ScaffoldMessenger.of(
             context,
@@ -62,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // AuthProvider'daki isLoading durumunu dinliyoruz
+    // AuthProvider's isLoading
     final authLoading = context.watch<AuthProvider>().isLoading;
 
     return Scaffold(
@@ -79,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset('assets/leaf_image.png', height: 100),
                 const SizedBox(height: 30),
 
-                // Email Field
+                // Email
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -98,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 15),
 
-                // Password Field
+                // Password
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,

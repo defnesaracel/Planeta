@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 1. Üst Kısım: Logo ve Başlık
+              //Logo
               const CircleAvatar(
                 radius: 40,
                 backgroundColor: Color(0xFF1B5E20),
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // 2. Daily Quote Bölümü (Yeni Eklendi)
+              //Quote
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -69,14 +69,14 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              // 3. Menü Kartları
+              //Menu Cards
               _buildMenuCard(
                 context,
                 icon: Icons.assignment_outlined,
                 title: "Daily Survey",
                 subtitle: "Complete today’s survey",
                 onTap: () {
-                  // UC3: Survey Screen yönlendirmesi buraya gelecek
+                  // UC3: Survey Screen navigation
                 },
               ),
               const SizedBox(height: 20),
@@ -86,27 +86,25 @@ class HomeScreen extends StatelessWidget {
                 title: "My History",
                 subtitle: "View your achievements",
                 onTap: () {
-                  // UC4: History Screen yönlendirmesi buraya gelecek
+                  // UC4: History Screen navigator
                 },
               ),
 
               const Spacer(),
 
-              // 4. Çıkış Yap Butonu (Opsiyonel ama gerekli)
+              //Logout
               TextButton.icon(
                 onPressed: () async {
-                  // 1. Çıkış işlemini başlat
                   await context.read<AuthProvider>().signOut();
 
-                  // 2. Kullanıcıyı giriş ekranına geri gönder ve arkadaki tüm sayfaları temizle
+                  // navigate user back to login screen
                   if (context.mounted) {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginScreen(),
                       ),
-                      (route) =>
-                          false, // Geri tuşuyla tekrar Home'a dönülmesini engeller
+                      (route) => false,
                     );
                   }
                 },

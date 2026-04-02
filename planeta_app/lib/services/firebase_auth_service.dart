@@ -5,7 +5,6 @@ import 'auth_service.dart';
 class FirebaseAuthService implements IAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Firebase User nesnesini kendi modelimize dönüştüren yardımcı metod
   UserEntity? _mapFirebaseUser(User? user) {
     return user != null ? UserEntity(uid: user.uid, email: user.email!) : null;
   }
@@ -19,7 +18,7 @@ class FirebaseAuthService implements IAuthService {
       );
       return _mapFirebaseUser(credential.user);
     } catch (e) {
-      rethrow; // Hatayı yakalayıp yukarı (Provider'a) fırlatıyoruz
+      rethrow;
     }
   }
 

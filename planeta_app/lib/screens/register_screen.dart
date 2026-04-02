@@ -40,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               content: Text("Account created successfully! Please login."),
             ),
           );
-          Navigator.pop(context); // Kayıttan sonra Login ekranına döner
+          Navigator.pop(context); // navigate to login after register
         }
       } catch (e) {
         if (mounted) {

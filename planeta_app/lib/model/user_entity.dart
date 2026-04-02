@@ -5,7 +5,7 @@ class UserEntity {
 
   UserEntity({required this.uid, required this.email, this.displayName});
 
-  // İleride Firebase'den veri çekerken (Firestore) kullanmak için factory metodu
+  // to fetch data from Firebase (Firestore)
   factory UserEntity.fromMap(Map<String, dynamic> data, String id) {
     return UserEntity(
       uid: id,
