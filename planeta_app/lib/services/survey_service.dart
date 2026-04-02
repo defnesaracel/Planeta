@@ -28,7 +28,8 @@ class SurveyService {
     ),
     SurveyQuestion(
       id: 'q4',
-      text: 'I made sure my dishwasher or washing machine (or both) was fully loaded before running it today.',
+      text:
+          'I made sure my dishwasher or washing machine (or both) was fully loaded before running it today.',
       type: QuestionType.likert,
       weight: 12.5,
     ),

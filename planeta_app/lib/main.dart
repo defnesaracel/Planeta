@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:planeta_app/providers/auth_provider.dart';
+import 'package:planeta_app/screens/home_screen.dart';
 import 'package:planeta_app/screens/login_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()), // Bunu ekle
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         // ChangeNotifierProvider(create: (_) => SurveyProvider()),
       ],
       child: const MyApp(),
@@ -29,11 +30,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Planeta',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const LoginScreen(),
+      initialRoute: '/login', // Uygulama login ile başlasın
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        // '/register': (context) => const RegisterScreen(),
+      },
     );
   }
 }
