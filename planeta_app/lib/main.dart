@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:planeta_app/providers/auth_provider.dart';
+import 'package:planeta_app/providers/survey_provider.dart';
 import 'package:planeta_app/screens/home_screen.dart';
 import 'package:planeta_app/screens/login_screen.dart';
 import 'firebase_options.dart';
@@ -13,7 +14,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        // ChangeNotifierProvider(create: (_) => SurveyProvider()),
+         ChangeNotifierProvider(create: (_) => SurveyProvider()),
       ],
       child: const MyApp(),
     ),

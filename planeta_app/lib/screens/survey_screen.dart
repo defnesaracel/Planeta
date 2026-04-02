@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:planeta_app/providers/auth_provider.dart';
+import 'package:planeta_app/providers/survey_provider.dart';
+import 'package:provider/provider.dart';
 import '../model/survey_model.dart';
 import '../services/survey_service.dart';
 
@@ -31,6 +34,8 @@ class _SurveyScreenState extends State<SurveyScreen>
   static const Color _lightGreen = Color(0xFFE8F5E9);
   static const Color _progressTrack = Color(0xFFD0E8D5);
   static const Color _textSecondary = Color(0xFF7A8C82);
+  
+  get cite => null;
 
   @override
   void initState() {
@@ -56,7 +61,8 @@ class _SurveyScreenState extends State<SurveyScreen>
     super.dispose();
   }
 
-  void _onNextPressed() {
+  void _onNextPressed() async {
+    print("Butona basıldı");
     if (_tempSelectedValue == null) return;
 
     _userAnswers.add(
@@ -75,13 +81,34 @@ class _SurveyScreenState extends State<SurveyScreen>
       });
       _animController.forward();
     } else {
-      final result = _surveyService.buildSurveyResult(
-        questions: _questions,
-        answers: _userAnswers,
-      );
-      _showResultDialog(result);
+     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final uid = authProvider.user?.uid;
+
+      if (uid != null) {
+        // 2. SurveyProvider'ı çağır ve anketi kaydet [cite: 224]
+        final surveyProvider = Provider.of<SurveyProvider>(context, listen: false);
+        
+        try {
+          // Bu metod hem puanı hesaplar hem de Firebase'e kaydeder
+          await surveyProvider.completeSurvey(uid, _userAnswers);
+          
+          // 3. Sonuç ekranını göster (Provider içindeki hesaplanmış sonucu kullanıyoruz)
+          if (mounted) {
+            _showResultDialog(surveyProvider.surveyHistory.first);
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error saving survey: $e")),
+            );
+          }
+        }
+      }
     }
   }
+// ...
+    
+  
 
   void _showResultDialog(SurveyResult result) {
     final Color scoreColor = result.totalScore >= 80

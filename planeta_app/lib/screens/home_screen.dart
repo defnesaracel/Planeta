@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:planeta_app/screens/history_screen.dart';
 import 'package:planeta_app/screens/login_screen.dart';
+import 'package:planeta_app/screens/survey_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -77,6 +79,10 @@ class HomeScreen extends StatelessWidget {
                 subtitle: "Complete today’s survey",
                 onTap: () {
                   // UC3: Survey Screen navigation
+                 Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SurveyScreen()), 
+    );
                 },
               ),
               const SizedBox(height: 20),
@@ -87,6 +93,11 @@ class HomeScreen extends StatelessWidget {
                 subtitle: "View your achievements",
                 onTap: () {
                   // UC4: History Screen navigator
+                  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const HistoryScreen()),
+  );
+                  
                 },
               ),
 
