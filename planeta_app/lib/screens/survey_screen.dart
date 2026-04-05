@@ -4,7 +4,7 @@ import 'package:planeta_app/providers/survey_provider.dart';
 import 'package:provider/provider.dart';
 import '../model/survey_model.dart';
 import '../services/survey_service.dart';
-
+import 'package:planeta_app/screens/home_screen.dart';
 class SurveyScreen extends StatefulWidget {
   const SurveyScreen({super.key});
 
@@ -35,11 +35,14 @@ class _SurveyScreenState extends State<SurveyScreen>
   static const Color _progressTrack = Color(0xFFD0E8D5);
   static const Color _textSecondary = Color(0xFF7A8C82);
   
-  get cite => null;
+  
 
   @override
   void initState() {
+
+
     super.initState();
+   
     _questions = _surveyService.getSurveyQuestions();
 
     _animController = AnimationController(
@@ -62,7 +65,7 @@ class _SurveyScreenState extends State<SurveyScreen>
   }
 
   void _onNextPressed() async {
-    print("Butona basıldı");
+    
     if (_tempSelectedValue == null) return;
 
     _userAnswers.add(
@@ -192,7 +195,17 @@ class _SurveyScreenState extends State<SurveyScreen>
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                 onPressed: () {
+  // 1. Dismiss the Dialog
+  Navigator.pop(context); 
+
+  // 2. Navigate to Home and clear the survey from the stack
+  Navigator.pushNamedAndRemoveUntil(
+    context, 
+    '/home', 
+    (route) => false, 
+  );
+},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _primaryGreen,
                     foregroundColor: Colors.white,
