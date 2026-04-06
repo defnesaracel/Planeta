@@ -1,9 +1,58 @@
 import '../model/survey_model.dart';
 
+/// Stateless helper responsible only for score math.
+class ScoreCalculator {
+  /// Calculates weighted score out of 100 from user answers.
+  ///
+  /// Rules:
+  /// - Yes/No: Yes(1) = full weight, No(0) = 0
+  /// - Likert: (value / 4) * weight where value is in range 0..4
+  double calculateTotalScore({
+    required List<SurveyQuestion> questions,
+    required List<SurveyAnswer> answers,
+  }) {
+    if (questions.isEmpty || answers.isEmpty) {
+      return 0;
+    }
+
+    final Map<String, SurveyQuestion> questionById = <String, SurveyQuestion>{
+      for (final SurveyQuestion question in questions) question.id: question,
+    };
+
+    double total = 0;
+
+    for (final SurveyAnswer answer in answers) {
+      final SurveyQuestion? question = questionById[answer.questionId];
+      if (question == null) {
+        continue;
+      }
+
+      switch (question.type) {
+        case QuestionType.yesNo:
+          final int normalized = answer.value.clamp(0, 1);
+          total += normalized == 1 ? question.weight : 0;
+          break;
+        case QuestionType.likert:
+          final int normalized = answer.value.clamp(0, 4);
+          total += (normalized / 4) * question.weight;
+          break;
+      }
+    }
+
+    // Keep score in the valid range even with unexpected duplicate answers.
+    return total.clamp(0, 100).toDouble();
+  }
+}
+
 /// Local-only service that handles survey question data and scoring.
 ///
 /// Firebase integration can be added later without changing model structure.
 class SurveyService {
+  SurveyService({ScoreCalculator? scoreCalculator})
+    : _scoreCalculator = scoreCalculator ?? ScoreCalculator();
+
+  final ScoreCalculator _scoreCalculator;
+
   /// Hardcoded environmental awareness questions.
   ///
   /// All question weights sum to exactly 100.
@@ -73,36 +122,10 @@ class SurveyService {
     required List<SurveyQuestion> questions,
     required List<SurveyAnswer> answers,
   }) {
-    if (questions.isEmpty || answers.isEmpty) {
-      return 0;
-    }
-
-    final Map<String, SurveyQuestion> questionById = <String, SurveyQuestion>{
-      for (final SurveyQuestion question in questions) question.id: question,
-    };
-
-    double total = 0;
-
-    for (final SurveyAnswer answer in answers) {
-      final SurveyQuestion? question = questionById[answer.questionId];
-      if (question == null) {
-        continue;
-      }
-
-      switch (question.type) {
-        case QuestionType.yesNo:
-          final int normalized = answer.value.clamp(0, 1);
-          total += normalized == 1 ? question.weight : 0;
-          break;
-        case QuestionType.likert:
-          final int normalized = answer.value.clamp(0, 4);
-          total += (normalized / 4) * question.weight;
-          break;
-      }
-    }
-
-    // Keep score in the valid range even with unexpected duplicate answers.
-    return total.clamp(0, 100).toDouble();
+    return _scoreCalculator.calculateTotalScore(
+      questions: questions,
+      answers: answers,
+    );
   }
 
   /// Returns feedback text based on total score.
