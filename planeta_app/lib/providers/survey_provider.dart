@@ -19,35 +19,71 @@ class SurveyProvider with ChangeNotifier {
   double get totalPoints => _surveyHistory.fold(0, (sum, item) => sum + item.totalScore);
 
   // --- UC3: Anket Tamamlama ve Kaydetme ---
-  Future<void> completeSurvey(String uid, List<SurveyAnswer> answers) async {
-    _isLoading = true;
-    notifyListeners();
+  // survey_provider.dart içine eklenecekler
 
-    try {
-      // 1. Servis aracılığıyla puanı hesapla ve sonucu paketle [cite: 165-166]
-      final List<SurveyQuestion> questions = _surveyService.getSurveyQuestions();
-      final SurveyResult result = _surveyService.buildSurveyResult(
-        questions: questions,
-        answers: answers,
-      );
+bool _alreadyFilledToday = false;
+bool get alreadyFilledToday => _alreadyFilledToday;
 
-      // 2. Firestore'a NoSQL dökümanı olarak kaydet [cite: 145-147, 225]
-      // Yol: users/{uid}/surveys/
-      await _db
-          .collection('users')
-          .doc(uid)
-          .collection('surveys')
-          .add(result.toJson());
+// UC: Günlük durumu kontrol et
+Future<void> checkDailyStatus(String uid) async {
+  try {
+    final userDoc = await _db.collection('users').doc(uid).get();
+    if (userDoc.exists && userDoc.data()!.containsKey('lastSurveyDate')) {
+      Timestamp lastTimestamp = userDoc.data()!['lastSurveyDate'];
+      DateTime lastDate = lastTimestamp.toDate();
+      DateTime now = DateTime.now();
 
-      // 3. Yerel listeyi güncelle ki History ekranında anında gözüksün [cite: 230]
-      _surveyHistory.insert(0, result);
-    } catch (e) {
-      rethrow;
-    } finally {
-      _isLoading = false;
+      _alreadyFilledToday = (lastDate.year == now.year &&
+                             lastDate.month == now.month &&
+                             lastDate.day == now.day);
+      notifyListeners();
+    } else {
+      _alreadyFilledToday = false;
       notifyListeners();
     }
+  } catch (e) {
+    debugPrint("Daily status check error: $e");
   }
+}
+
+// completeSurvey metodunu Batch Write ile güncelle
+Future<void> completeSurvey(String uid, List<SurveyAnswer> answers) async {
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    final List<SurveyQuestion> questions = _surveyService.getSurveyQuestions();
+    final SurveyResult result = _surveyService.buildSurveyResult(
+      questions: questions,
+      answers: answers,
+    );
+
+    // Atomik işlem için Batch kullanıyoruz
+    WriteBatch batch = _db.batch();
+
+    // 1. Anketi alt koleksiyona ekle
+    DocumentReference surveyRef = _db.collection('users').doc(uid).collection('surveys').doc();
+    batch.set(surveyRef, result.toJson());
+
+    // 2. Ana kullanıcı dökümanındaki tarihi güncelle
+    DocumentReference userRef = _db.collection('users').doc(uid);
+batch.set(
+  userRef, 
+  {'lastSurveyDate': FieldValue.serverTimestamp()}, 
+  SetOptions(merge: true)
+);
+
+await batch.commit();
+
+    _surveyHistory.insert(0, result);
+    _alreadyFilledToday = true; // Yerel durumu güncelle
+  } catch (e) {
+    rethrow;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
 
   // --- UC4: Geçmişi Yükleme ---
   Future<void> loadUserHistory(String uid) async {
