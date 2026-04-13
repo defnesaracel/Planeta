@@ -127,9 +127,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     // Örnek Award Logic [cite: 138]
     return Row(
       children: [
-        _badgeIcon(Icons.spa, "Beginner", true),
-        _badgeIcon(Icons.bolt, "Warrior", totalPoints > 100),
-        _badgeIcon(Icons.public, "Protector", totalPoints > 500),
+        _badgeIcon(Icons.spa, "Beginner", totalPoints>200),
+        _badgeIcon(Icons.bolt, "Warrior", totalPoints > 400),
+        _badgeIcon(Icons.public, "Protector", totalPoints > 600),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planeta_app/providers/survey_provider.dart';
 import 'package:planeta_app/screens/history_screen.dart';
 import 'package:planeta_app/screens/login_screen.dart';
 import 'package:planeta_app/screens/survey_screen.dart';
@@ -10,6 +11,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final surveyProvider = context.watch<SurveyProvider>();
+  final authProvider = context.watch<AuthProvider>();
+  final uid = authProvider.user?.uid;
+if (uid != null) {
+  // PostFrameCallback kullanarak build işlemi bittikten sonra veriyi çekiyoruz
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    context.read<SurveyProvider>().checkDailyStatus(uid);
+  });
+}
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -72,19 +82,36 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 40),
 
               //Menu Cards
-              _buildMenuCard(
-                context,
-                icon: Icons.assignment_outlined,
-                title: "Daily Survey",
-                subtitle: "Complete today’s survey",
-                onTap: () {
-                  // UC3: Survey Screen navigation
-                 Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SurveyScreen()), 
-    );
-                },
-              ),
+              // home_screen.dart içinde _buildMenuCard kullanımını güncelle
+
+_buildMenuCard(
+  
+  context,
+  icon: Icons.assignment_outlined,
+  title: "Daily Survey",
+  subtitle: surveyProvider.alreadyFilledToday 
+      ? "Come back tomorrow!" 
+      : "Complete today’s survey",
+  onTap: () async {
+    final provider = Provider.of<SurveyProvider>(context, listen: false);
+    
+    if (provider.alreadyFilledToday) {
+      // Hakkı dolmuşsa mesaj göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You've already completed today's survey! 🌱"),
+          backgroundColor: Color(0xFF1B5E20),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SurveyScreen()), 
+      );
+    }
+  },
+),
               const SizedBox(height: 20),
               _buildMenuCard(
                 context,
