@@ -92,21 +92,21 @@ Future<void> answerAllQuestions(WidgetTester tester) async {
 }
 
 void main() {
-  group('SurveyScreen Widget Testleri', () {
-    testWidgets('ST-01: Ekran dogru yukleniyor', (tester) async {
+  group('SurveyScreen Widget Tests', () {
+    testWidgets('ST-01: Screen loads correctly', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       expect(find.text('Daily Survey'), findsOneWidget);
       expect(find.text('Question 1 of 8'), findsOneWidget);
       expect(find.text('13%'), findsOneWidget);
     });
 
-    testWidgets('ST-02: Ilk soru Yes/No secenekleri gosteriyor', (tester) async {
+    testWidgets('ST-02: First question shows Yes/No options', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       expect(find.text('Yes ✓'), findsOneWidget);
       expect(find.text('No'), findsOneWidget);
     });
 
-    testWidgets('ST-03: Cevap secilmeden Next butonu disabled olmali', (tester) async {
+    testWidgets('ST-03: Next button should be disabled before an answer is selected', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       final button = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, 'Next Question'),
@@ -114,7 +114,7 @@ void main() {
       expect(button.onPressed, isNull);
     });
 
-    testWidgets('ST-04: Cevap secilince Next butonu aktif olmali', (tester) async {
+    testWidgets('ST-04: Next button should be active once an answer is selected', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await tester.tap(find.text('Yes ✓'));
       await tester.pump();
@@ -124,14 +124,14 @@ void main() {
       expect(button.onPressed, isNotNull);
     });
 
-    testWidgets('ST-05: Secilen secenek checkmark gostermeli', (tester) async {
+    testWidgets('ST-05: Selected option should display a checkmark', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await tester.tap(find.text('Yes ✓'));
       await tester.pump();
       expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
     });
 
-    testWidgets('ST-06: Next butonuna basinca soru 2ye gecmeli', (tester) async {
+    testWidgets('ST-06: Tapping Next button should navigate to question 2', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await tester.tap(find.text('Yes ✓'));
       await tester.pump();
@@ -141,7 +141,7 @@ void main() {
       expect(find.text('25%'), findsOneWidget);
     });
 
-    testWidgets('ST-07: Sonraki soruya gecince secim sifirlanmali', (tester) async {
+    testWidgets('ST-07: Selection should reset when moving to the next question', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await tester.tap(find.text('Yes ✓'));
       await tester.pump();
@@ -150,7 +150,7 @@ void main() {
       expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
     });
 
-    testWidgets('ST-08: Ilerleme cubugu her soruda artmali', (tester) async {
+    testWidgets('ST-08: Progress bar should increase with each question', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       LinearProgressIndicator bar = tester.widget<LinearProgressIndicator>(
         find.byType(LinearProgressIndicator),
@@ -166,7 +166,7 @@ void main() {
       expect(bar.value, closeTo(2 / 8, 0.001));
     });
 
-    testWidgets('ST-09: 8. soruda Submit butonu gorunmeli', (tester) async {
+    testWidgets('ST-09: Submit button should appear on the 8th question', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       for (int i = 0; i < 7; i++) {
         final isLikert =
@@ -185,7 +185,7 @@ void main() {
       expect(find.widgetWithText(ElevatedButton, 'Next Question'), findsNothing);
     });
 
-    testWidgets('ST-10: Tum sorular cevaplandıgında sonuc dialogu acilmali', (tester) async {
+    testWidgets('ST-10: Result dialog should open when all questions are answered', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await answerAllQuestions(tester);
       expect(find.text('Survey Complete!'), findsOneWidget);
@@ -193,7 +193,7 @@ void main() {
       expect(find.text('Great!'), findsOneWidget);
     });
 
-    testWidgets('ST-11: Sonuc dialogu skoru dogru gostermeli', (tester) async {
+    testWidgets('ST-11: Result dialog should display the correct score', (tester) async {
       await tester.pumpWidget(buildSurveyScreen(
         surveyProvider: MockSurveyProvider(score: 100.0),
       ));
@@ -202,7 +202,7 @@ void main() {
       expect(find.textContaining('environmental champion'), findsOneWidget);
     });
 
-    testWidgets('ST-12: Dusuk skor icin dogru feedback gostermeli', (tester) async {
+    testWidgets('ST-12: Correct feedback should be displayed for low scores', (tester) async {
       await tester.pumpWidget(buildSurveyScreen(
         surveyProvider: MockSurveyProvider(
           score: 25.0,
@@ -214,7 +214,7 @@ void main() {
       expect(find.textContaining('Needs Improvement'), findsOneWidget);
     });
 
-    testWidgets('ST-13: Sonuc dialogu disina tiklanarak kapatilamamali', (tester) async {
+    testWidgets('ST-13: Result dialog should not be dismissible by tapping outside', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await answerAllQuestions(tester);
       await tester.tapAt(const Offset(10, 10));
@@ -222,7 +222,7 @@ void main() {
       expect(find.text('Survey Complete!'), findsOneWidget);
     });
 
-    testWidgets('ST-14: Great! butonuna basinca Home ekranina gidilmeli', (tester) async {
+    testWidgets('ST-14: Tapping Great! button should navigate back to Home screen', (tester) async {
       await tester.pumpWidget(buildSurveyScreen());
       await answerAllQuestions(tester);
       await tester.tap(find.text('Great!'));
@@ -232,3 +232,4 @@ void main() {
     });
   });
 }
+  
