@@ -4,7 +4,6 @@ import 'package:planeta_app/providers/survey_provider.dart';
 import 'package:provider/provider.dart';
 import '../model/survey_model.dart';
 import '../services/survey_service.dart';
-import 'package:planeta_app/screens/home_screen.dart';
 class SurveyScreen extends StatefulWidget {
   const SurveyScreen({super.key});
 
